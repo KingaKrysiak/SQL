@@ -1,0 +1,26 @@
+SELECT
+c.customer_id AS klient_id,
+c.customer_name AS klient,
+COUNT(DISTINCT o.order_id) AS liczba_zamowien,
+AVG(o.total_amount) AS srednia_wartosc_zamowienia,
+cat.category_name AS kategoria_produktow
+FROM
+customers c
+INNER JOIN orders o ON c.customer_id = o.customer_id
+INNER JOIN order_items oi ON o.order_id = oi.order_id
+LEFT JOIN products p ON oi.product_id = p.product_id
+LEFT JOIN categories cat ON p.category_id = cat.category_id
+WHERE
+o.order_date BETWEEN '2024-01-01' AND '2024-12-31'
+AND c.customer_status IN ('active', 'premium')
+AND c.customer_name LIKE 'K%'
+GROUP BY
+c.customer_id,
+c.customer_name,
+cat.category_name
+HAVING
+COUNT(DISTINCT o.order_id) > 2
+ORDER BY
+liczba_zamowien DESC,
+srednia_wartosc_zamowienia DESC
+LIMIT 5;
