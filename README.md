@@ -1,6 +1,6 @@
 # SQL
 
-Zapytanie służy do analizy aktywności klientów sklepu internetowego w określonym przedziale czasowym (rok 2024). Celem jest wyłonienie pięciu najbardziej aktywnych klientów, którzy złożyli co najmniej trzy zamówienia, oraz prezentacja dodatkowych informacji o ich zamówieniach i preferencjach produktowych.
+Zapytanie służy do analizy aktywności klientów sklepu internetowego w określonym przedziale czasowym (rok 2024). Celem jest wyłonienie pięciu najbardziej aktywnych klientów na literę K, którzy złożyli co najmniej trzy zamówienia, oraz prezentacja dodatkowych informacji o ich zamówieniach i preferencjach produktowych. 
 
 W zapytaniu wykorzystano:
 
