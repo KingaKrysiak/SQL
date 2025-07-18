@@ -1,0 +1,91 @@
+CREATE DATABASE kofeinka;
+USE kofeinka;
+
+CREATE TABLE klienci (
+    klient_id INT PRIMARY KEY,
+    nazwa VARCHAR(50),
+    data_rejestracji DATE
+);
+
+CREATE TABLE Zamówienia (
+    zamówienie_id INT PRIMARY KEY,
+    klient_id INT,
+    data_zamówienia DATE,
+    całkowita_wartość DECIMAL(10,2),
+    FOREIGN KEY (klient_id) REFERENCES Klienci(klient_id)
+);
+
+CREATE TABLE Pozycje (
+    pozycja_id INT PRIMARY KEY,
+    nazwa_pozycji VARCHAR(50),
+    cena DECIMAL(10,2)
+    );
+
+CREATE TABLE zamówienia_pozycji (
+    zamówienie_id INT,
+    pozycja_id INT,
+    wartość INT,
+    FOREIGN KEY (zamówienie_id) REFERENCES zamówienia(zamówienie_id),
+    FOREIGN KEY (pozycja_id) REFERENCES pozycje(pozycja_id)
+);
+
+INSERT INTO klienci VALUES
+(1, 'Anna Nowak', '2025-06-01'),
+(2, 'Jan Kowalski', '2025-06-10'),
+(3, 'Kinga Kwot', '2025-06-15');
+
+INSERT INTO pozycje VALUES
+(1, 'Latte', 15.00),
+(2, 'Espresso', 8.00),
+(3, 'Croissant', 7.50);
+
+INSERT INTO zamówienia VALUES
+(101, 1, '2025-07-10', 30.00),
+(102, 2, '2025-07-11', 23.50),
+(103, 3, '2025-07-12', 15.00);
+
+INSERT INTO zamówienia_pozycji VALUES
+(101, 1, 2),
+(102, 2, 1),
+(102, 3, 2),
+(103, 1, 1);
+
+Zapytania
+1) Top 3 najlepiej sprzedające się produkty
+
+SELECT nazwa_pozycji, SUM(wartość) AS całkowita_sprzedaż 
+FROM zamówienia_pozycji 
+JOIN pozycje ON pozycje.pozycja_id = zamówienia_pozycji.pozycja_id 
+GROUP BY nazwa_pozycji 
+ORDER BY całkowita_sprzedaż DESC 
+LIMIT 3;
+
+2) Średnia wartość zamówienia na klienta
+
+SELECT nazwa, AVG(całkowita_wartość) AS średnia_wartość_zamówienia
+FROM zamówienia
+JOIN klienci ON zamówienia.klient_id = klienci.klient_id
+GROUP BY nazwa
+ORDER BY średnia_wartość_zamówienia DESC;
+
+3) Nowi klienci po 11 czerwca 2025
+
+SELECT nazwa
+FROM klienci
+WHERE data_rejestracji BETWEEN '2025-06-11' AND '2025-06-30';
+
+4) Klienci i ich zamówienia
+SELECT nazwa, nazwa_pozycji, (wartość * cena) AS łączna_wartość 
+FROM klienci 
+INNER JOIN zamówienia ON klienci.klient_id = zamówienia.klient_id 
+INNER JOIN zamówienia_pozycji ON zamówienia.zamówienie_id = zamówienia_pozycji.zamówienie_id 
+INNER JOIN pozycje ON zamówienia_pozycji.pozycja_id = pozycje.pozycja_id;
+
+5) Lista klientów i sumę pieniędzy, które wydali na zamówienia (całkowita_wartość), posortowaną od największej do najmniejszej kwoty
+
+SELECT nazwa, (wartość * cena) AS całkowita_wartość
+FROM klienci
+INNER JOIN zamówienia ON klienci.klient_id = zamówienia.klient_id
+INNER JOIN zamówienia_pozycji ON zamówienia.zamówienie_id = zamówienia_pozycji.zamówienie_id
+INNER JOIN pozycje ON zamówienia_pozycji.pozycja_id = pozycje.pozycja_id
+ORDER BY całkowita_wartość DESC
